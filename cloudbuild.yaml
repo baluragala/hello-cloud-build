@@ -13,17 +13,17 @@ steps:
       [
         "build",
         "-t",
-        "gcr.io/upgradlabs-1746955320647/hello-express-service:$COMMIT_SHA",
+        "gcr.io/$PROJECT_ID/hello-express-service:${_TAG}",
         ".",
       ]
 
   # Push the container image to Google Container Registry (GCR)
-  # You can also use Artifact Registry: asia-south1-docker.pkg.dev/upgradlabs-1746954845644/[REPOSITORY_NAME]/hello-express-service:$COMMIT_SHA
+  # You can also use Artifact Registry: asia-south1-docker.pkg.dev/$PROJECT_ID/[REPOSITORY_NAME]/hello-express-service:${_TAG}
   - name: "gcr.io/cloud-builders/docker"
     args:
       [
         "push",
-        "gcr.io/upgradlabs-1746955320647/hello-express-service:$COMMIT_SHA",
+        "gcr.io/$PROJECT_ID/hello-express-service:${_TAG}",
       ]
 
   # Deploy container image to Cloud Run
@@ -34,7 +34,7 @@ steps:
         "deploy",
         "hello-express-service",
         "--image",
-        "gcr.io/upgradlabs-1746955320647/hello-express-service:$COMMIT_SHA",
+        "gcr.io/$PROJECT_ID/hello-express-service:${_TAG}",
         "--region",
         "asia-south1",
         "--platform",
@@ -43,7 +43,11 @@ steps:
       ]
 
 images:
-  - "gcr.io/upgradlabs-17469553206475/hello-express-service:$COMMIT_SHA"
+  - "gcr.io/$PROJECT_ID/hello-express-service:${_TAG}"
+
+# Define substitutions with default values
+substitutions:
+  _TAG: "${SHORT_SHA}"  # Use SHORT_SHA as default, fallback to 'latest' if needed
 
 options:
   logging: CLOUD_LOGGING_ONLY
